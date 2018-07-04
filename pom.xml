@@ -2,24 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.netease.news.rec</groupId>
-	<artifactId>streams</artifactId>
+	<groupId>com.linecorp.dispatch</groupId>
+	<artifactId>dispatch</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>app_streams</name>
+	<name>dispatch</name>
 	<url>http://maven.apache.org</url>
-    <repositories>
-        <repository>
-            <id>my-hz-mvn</id>
-            <name>my-hz-repo</name>
-            <url>http://mvn.hz.netease.com/artifactory/repo</url>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-        </repository>
-    </repositories>
-
 
     <properties>
 		<jdbc.driver.groupId>mysql</jdbc.driver.groupId>
@@ -55,7 +44,7 @@
 	</profiles>
 
 	<build>
-		<finalName>app_streams</finalName>
+		<finalName>dispatch</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
