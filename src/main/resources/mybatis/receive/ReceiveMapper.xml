@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lioncorp.dispatch.dao.db.mapper.ReceiveMapper">
+
+	<insert id="saveOrUpdate" parameterType="java.util.List" useGeneratedKeys="true" >		
+		<![CDATA[ insert into test (test1, test2, test3) values ]]>
+		<foreach collection="dataList" item="item" index="index" separator=",">
+			( #{item.test1, jdbcType=VARCHAR},
+			#{item.test2,jdbcType=VARCHAR},
+			#{item.test3,jdbcType=VARCHAR}
+			)
+		</foreach>
+		on duplicate key update 
+			test1=values(test1),
+			test2=values(test2),
+			test3=values(test3)
+		</insert>
+</mapper> 

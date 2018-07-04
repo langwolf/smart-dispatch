@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:jms="http://www.springframework.org/schema/jms"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/aop 
+          http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+          http://www.springframework.org/schema/context 
+          http://www.springframework.org/schema/context/spring-context-4.2.xsd
+          http://www.springframework.org/schema/tx 
+          http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+          http://www.springframework.org/schema/util 
+          http://www.springframework.org/schema/util/spring-util-4.2.xsd
+          http://www.springframework.org/schema/task
+		  http://www.springframework.org/schema/task/spring-task-4.2.xsd
+		  http://www.springframework.org/schema/jms 
+		  http://www.springframework.org/schema/jms/spring-jms-4.2.xsd">
+          
+ 	
+	<task:scheduler id="scheduler" pool-size="15" />
+	<task:executor id="defExecutor" keep-alive="3600" pool-size="15-40"
+		queue-capacity="500" rejection-policy="CALLER_RUNS" />
+    <task:annotation-driven executor="defExecutor" scheduler="scheduler" />
+    
+    <task:executor id="testExecutor" keep-alive="3600" pool-size="8-20"
+		queue-capacity="500" rejection-policy="CALLER_RUNS" />
+
+	<context:property-placeholder location="classpath*:config*.properties" ignore-unresolvable="true"/>
+
+	<context:component-scan base-package="com.lioncorp.common" />
+	<context:component-scan base-package="com.lioncorp.dispatch.dao" />
+	<context:component-scan base-package="com.lioncorp.dispatch.event" />
+	<context:component-scan base-package="com.lioncorp.dispatch.listener" />
+	<context:component-scan base-package="com.lioncorp.dispatch.model" />
+	<context:component-scan base-package="com.lioncorp.dispatch.service" />
+
+    <import resource="kafkaProducer.xml"/>
+	<import resource="context-db-dynamic.xml"/>
+     
+     <bean id="consumerPlatProperties" class="java.util.HashMap">
+     	<constructor-arg>
+     		<map>
+		     	<entry key="bootstrap.servers" value="${kafka.test.address}"/>
+		     	<entry key="group.id" value="${kafka.group.name}"/>
+		     	<!--<entry key="auto.offset.reset" value="earliest"/>  -->
+		     	<entry key="auto.offset.reset" value="latest"/>
+		     	<entry key="enable.auto.commit" value="false"/>
+		     	<entry key="auto.commit.interval.ms" value="5000"/>
+		     	<entry key="session.timeout.ms" value="30000"/>
+		     	<entry key="max.poll.records" value="10"/>
+		     	<entry key="key.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer"/>
+		     	<entry key="value.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer"/>
+     		</map>
+     	</constructor-arg>
+     </bean>
+
+     <bean id="consumerPlatFactory" class="org.springframework.kafka.core.DefaultKafkaConsumerFactory">
+     	<constructor-arg>
+     		<ref bean="consumerPlatProperties"/>
+     	</constructor-arg>
+     </bean>
+
+     <bean id="msgPlatListernerConsumerService" class="com.lioncorp.dispatch.queue.KafkaConsumerServer"/>
+
+     <bean id="containerPlatProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
+     	<constructor-arg value="test1,test2,test3"/>
+     	<property name="messageListener" ref="msgPlatListernerConsumerService"/>
+     </bean>
+
+     <bean id="msgListenerContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer" 
+     	init-method="doStart">
+     	<constructor-arg ref="consumerPlatFactory"/>
+     	<constructor-arg ref="containerPlatProperties"/>
+     </bean>
+</beans>
