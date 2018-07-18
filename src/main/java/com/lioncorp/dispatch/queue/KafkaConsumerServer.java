@@ -37,7 +37,7 @@ public class KafkaConsumerServer extends ConcurrencyThrottleSupport implements
 	@Resource
 	private AssembleOrigiDataService assembleOrigiDataService;
 	@Resource
-	private AssembleDataService assembleApolloService;
+	private AssembleDataService assembleDataService;
 
 	@Resource(name = "testExecutor")
 	private TaskExecutor taskExecutor;
@@ -63,7 +63,7 @@ public class KafkaConsumerServer extends ConcurrencyThrottleSupport implements
 							.asyncAssembleData(new BaseAssembleByQueue() {
 								@Override
 								public List<JSONObject> getData() {
-									return assembleApolloService
+									return assembleDataService
 											.assembleData(list);
 								}
 
