@@ -21,7 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<webapp.directory>${project.build.directory}/webapp</webapp.directory>
 		<c3p0.version>0.9.1.2</c3p0.version>
-		<mybatis.version>3.2.7</mybatis.version>
+		<mybatis.version>3.5.6</mybatis.version>
 	</properties>
 
 	<profiles>
